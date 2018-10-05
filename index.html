@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>テクノロジーアプリ制作課題#1</title>
+  </head>
+  <body>
+    <header>
+      <h1>画像認識</h1>
+    </header>
+    <main>
+      <img style="max-width: 400px;"><input type="file" accept="image/*" />
+      <script type="javascript">
+        // Cloud Vision APIのAPIキー
+        const api_key = "AIzaSyCzjA9cgXh6ocrszJmBQaTS32e1xExwD0E";
+        // 
+        const url = "https://vision.googleapis.com/v1/images:annotate";
+        let local_image = "./assets/images/chin.jpg";
+
+        // リクエスト送信（Cloud Vision API）
+        const sendAPI = (base64string) => {
+          let body = {
+            requests: [
+              {image: {content: base64string}, features: [{type: 'TEXT_DETECTION'}]}
+            ]
+          };
+          let xhr = new XMLHttpRequest();
+          xhr.open('POST', `${url}?key=${api_key}`, true);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          const p = new Promise((resolve, reject) => {
+            xhr.onreadystatechange = () => {
+              if (xhr.readyState != XMLHttpRequest.DONE) return;
+              if (xhr.status >= 400) return reject({message: `Failed with ${xhr.status}:${xhr.statusText}`});
+              resolve(JSON.parse(xhr.responseText));
+            };
+          })
+          xhr.send(JSON.stringify(body));
+          return p;
+        }
+
+      </script>
+    </main>
+    <footer>
+    </footer>
+  </body>
+</html>
