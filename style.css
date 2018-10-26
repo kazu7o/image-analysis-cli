@@ -1,0 +1,21 @@
+ul {
+  margin-left: -5%;
+  font-size: 0;
+}
+
+li {
+  display: inline-block;
+  background-color: #343434;
+  width: 25%;
+  font-size: 14px;
+  text-align: center;
+}
+a:link {
+  color: #ffffff;
+}
+a:visited {
+  color: #ffffff;
+}
+a:hover {
+  color: #87ceeb;
+}

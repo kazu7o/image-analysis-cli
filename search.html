@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <title>テクノロジーアプリ制作課題#1</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="./index.html">ImageAnalyzer</a></li>
+          <li><a href="./search.html">Flickr API</a></li>
+          <li><a href="./label.html">CloudVision API</a></li>
+        </ul>
+      </nav>
+      <h1>画像検索</h1>
+    </header>
+    <main>
+      <!-- <img style="max-width: 400px;"><input type="file" accept="image/*" /> -->
+      <input type="text" name="keyword" id="keyword">
+      <input type="submit" value="send" id="send">
+      <div id="photo_table"></div>
+      <pre></pre>
+      <script>
+        // Flickrから返ってくるJSONを処理
+        const jsonFlickrFeed = (data) => {
+          photo_table = document.getElementById('photo_table');
+          photo_table.innerHTML = "";
+          for (i = 0; i < data.items.length; i++){
+            let item = data.items[i];
+            let img = document.createElement('img');
+            img.src = item.media.m;
+            photo_table.appendChild(img);
+          }
+        }
+
+        document.getElementById('send').addEventListener('click', ev => {
+          // scriptタグを生成
+          let script = document.createElement('script');
+          let keyword = document.getElementById('keyword').value;
+          script.src = "https://api.flickr.com/services/feeds/photos_public.gne?format=json&tags=" + encodeURIComponent(keyword);
+          // FlickrAPIにリクエスト送信
+          document.body.appendChild(script);
+          document.body.removeChild(script);
+        });
+      </script>
+    </main>
+    <footer>
+    </footer>
+  </body>
+</html>

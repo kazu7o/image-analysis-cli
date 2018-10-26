@@ -14,12 +14,11 @@
           <li><a href="./label.html">CloudVision API</a></li>
         </ul>
       </nav>
-      <h1>類似画像検索</h1>
+      <h1>ラベル抽出</h1>
     </header>
     <main>
       <img style="max-width: 400px;"><input type="file" accept="image/*" />
       <pre></pre>
-      <div id="photo_table"></div>
       <script>
 
         // Cloud Vision APIのAPIキー
@@ -80,30 +79,6 @@
           return p;
         };
 
-        // Flickrから返ってくるJSONを処理
-        const jsonFlickrFeed = (data) => {
-          photo_table = document.getElementById('photo_table');
-          photo_table.innerHTML = "";
-          for (i = 0; i < data.items.length; i++){
-            let item = data.items[i];
-            let img = document.createElement('img');
-            img.src = item.media.m;
-            photo_table.appendChild(img);
-          }
-          console.log(data.items.length);
-        }
-
-        // キーワード作成
-        const createKeyword = (list) =>{
-          let keyword = "";
-
-          // 検索精度を考慮して上位3ラベルで検索
-          for(i = 0; i < 3; i++){
-            keyword += list[i].description + ",";
-          }
-          console.log(encodeURIComponent(keyword));
-          return encodeURIComponent(keyword);
-        }
         // イベントハンドラ（ファイルが選択された時）
         document.querySelector('input').addEventListener('change', ev => {
 
@@ -115,15 +90,13 @@
             .then(readFile)
             .then(sendAPI)
             .then(res => {
-              // scriptタグを生成
-              let script = document.createElement('script');
-              let keyword = createKeyword(res.responses[0].labelAnnotations);
-              script.src = "https://api.flickr.com/services/feeds/photos_public.gne?format=json&tagmode=any&tags=" + keyword;
-              // FlickrAPIにリクエスト送信
-              document.body.appendChild(script);
-              document.body.removeChild(script);
+              console.log('SUCCESS!', res);
+              document.querySelector('pre').innerHTML = JSON.stringify(res, null, 2);
             })
-
+            .catch(err => {
+              console.log('FAILED:(', err);
+              document.querySelector('pre').innerHTML = JSON.stringify(err, null, 2);
+            });
         });
       </script>
     </main>
