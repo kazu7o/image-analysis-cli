@@ -3,19 +3,11 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="style.css">
+    <script type="text/javascript" src="js/template.js"></script>
     <title>テクノロジーアプリ制作課題#1</title>
   </head>
   <body>
-    <header>
-      <nav>
-        <ul>
-          <li><a href="./index.html">ImageAnalyzer</a></li>
-          <li><a href="./search.html">Flickr API</a></li>
-          <li><a href="./label.html">CloudVision API</a></li>
-        </ul>
-      </nav>
-      <h1>類似画像検索</h1>
-    </header>
+    <script type="text/javascript">header("類似画像検索")</script>
     <main>
       <img style="max-width: 400px;"><input type="file" accept="image/*" />
       <pre></pre>
@@ -123,7 +115,6 @@
               document.body.appendChild(script);
               document.body.removeChild(script);
             })
-
         });
       </script>
     </main>

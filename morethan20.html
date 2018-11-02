@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script type="text/javascript" src="js/template.js"></script>
+    <title>テクノロジーアプリ制作課題#1</title>
+  </head>
+  <body>
+    <script>header("Flickr.photos.search")</script>
+    <main>
+      <input type="text" name="keyword" id="keyword">
+      <input type="submit" value="send" id="send">
+      <pre></pre>
+      <script>
+        // Flickr API Key
+        const api_key_f = `82b8fb90424d466a7781d9dd30b7a644`;
+
+        // Flickr API
+        const url_f = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=0381854dcbbad40ac9a09a07365cbd6a&content_type=photos&per_page=30&format=json&nojsoncallback=1`
+
+        // リクエスト送信
+        const sendAPI = (tags) => {
+          let request = new XMLHttpRequest();
+          console.log(tags);
+          request.open('GET', `${url_f}&tags=${tags}`, false);
+          request.send();
+          let p = request.responseText;
+          console.log(p);
+          return p;
+        }
+        document.getElementById('send').addEventListener('click', ev => {
+          let tags = document.getElementById('keyword').value;
+          let p = sendAPI(tags);
+          document.querySelector('pre').innerHTML = p;
+          let farm = p.photos.photo[0].farm;
+          let server = p.photos.photo[0].server;
+          let id = p.photos.photo[0].id;
+          let secret = p.photos.photo[0].secret;
+          document.write("<img　src=`http://farm${farm}.staticflickr.com/${server}/${id}_${secret}.jpg`>");
+        })
+      </script>
+    </main>
+    <footer>
+    </footer>
+  </body>
+</html>
