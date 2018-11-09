@@ -4,6 +4,7 @@ const header = (h1) => {
   html += '<nav>';
   html += '<ul>';
   html += '<li><a href="./index.html">ImageAnalyzer</a></li>';
+  html += '<li><a href="./imageanalyzer_old.html">ImageAnalyzer_old</a></li>';
   html += '<li><a href="./search.html">Flickr API</a></li>';
   html += '<li><a href="./label.html">CloudVision API</a></li>';
   html += '<li><a href="./morethan20.html">Flicker.photos.search</a></li>';

@@ -7,20 +7,12 @@
     <title>テクノロジーアプリ制作課題#1</title>
   </head>
   <body>
-    <script>header("類似画像検索")</script>
+    <script type="text/javascript">header("ImageAnalyzer_old")</script>
     <main>
       <img style="max-width: 400px;"><input type="file" accept="image/*" />
       <pre></pre>
       <div id="photo_table"></div>
       <script>
-        // Flickr API Key
-        const api_key_f = `82b8fb90424d466a7781d9dd30b7a644`;
-
-        // Flickr API
-        const url_f = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${api_key_f}&content_type=photos&per_page=30&format=json&nojsoncallback=1&extras=url_s`
-
-        // ページ
-        var page = 1;
 
         // Cloud Vision APIのAPIキー
         const api_key = `AIzaSyCzjA9cgXh6ocrszJmBQaTS32e1xExwD0E`;
@@ -81,49 +73,18 @@
         };
 
         // Flickrから返ってくるJSONを処理
-        // リクエスト送信
-        const sendAPI_f = (tags, page) => {
-          let request = new XMLHttpRequest();
-          console.log(tags);
-          request.open('GET', `${url_f}&tags=${tags}&page=${page}`, false);
-          request.send();
-          let p = request.responseText;
-          console.log(JSON.parse(p));
-          return JSON.parse(p);
+        const jsonFlickrFeed = (data) => {
+          photo_table = document.getElementById('photo_table');
+          photo_table.innerHTML = "";
+          for (i = 0; i < data.items.length; i++){
+            let item = data.items[i];
+            let img = document.createElement('img');
+            img.src = item.media.m;
+            photo_table.appendChild(img);
+          }
+          console.log(data.items.length);
         }
 
-        const add = (tags) => {
-          document.getElementById('load').addEventListener('click', ev => {
-            document.getElementById('photo_table').innerHTML = "";
-            let pages = sendAPI_f(tags, 1).photos.pages;
-            if(page <= pages){
-              let p = sendAPI_f(tags, page);
-              var table = "";
-              table += "<table>";
-              for(i = 0; i < p.photos.photo.length; i += 5){
-                // // imgタグを生成
-                // imgs[i] = document.createElement('img');
-                // imgs[i].src = p.photos.photo[i].url_s;
-                // // FlickrAPIにリクエスト送信
-                // document.body.appendChild(imgs[i]);
-                table += "<tr>";
-                k = i;
-                while(k < (i+5) && k < p.photos.photo.length){
-                  table += "<td>";
-                  table += `<img src=${p.photos.photo[k].url_s}>`;
-                  table += "</td>";
-                  k++;
-                }
-                table += "</tr>";
-              }
-              table += "</table>";
-              document.getElementById('photo_table').innerHTML += table;
-              document.getElementById('photo_table').innerHTML += "<input type=submit value=next id=load>";
-              page++;
-              add(tags);
-            }
-          })
-        }
         // キーワード作成
         const createKeyword = (list) =>{
           let keyword = "";
@@ -146,34 +107,13 @@
             .then(readFile)
             .then(sendAPI)
             .then(res => {
-              let tags = createKeyword(res.responses[0].labelAnnotations);
-              document.getElementById('photo_table').innerHTML = "";
-              let pages = sendAPI_f(tags, 1).photos.pages;
-              var page = 1;
-              let p = sendAPI_f(tags, page);
-              var table = "";
-              table += "<table>";
-              for(i = 0; i < p.photos.photo.length; i += 5){
-                // // imgタグを生成
-                // imgs[i] = document.createElement('img');
-                // imgs[i].src = p.photos.photo[i].url_s;
-                // // FlickrAPIにリクエスト送信
-                // document.body.appendChild(imgs[i]);
-                table += "<tr>";
-                k = i;
-                while(k < (i+5) && k < p.photos.photo.length){
-                  table += "<td>";
-                  table += `<img src=${p.photos.photo[k].url_s}>`;
-                  table += "</td>";
-                  k++;
-                }
-                table += "</tr>";
-              }
-              table += "</table>";
-              document.getElementById('photo_table').innerHTML += table;
-              document.getElementById('photo_table').innerHTML += "<input type=submit value=next id=load>";
-              page++;
-              add(tags);
+              // scriptタグを生成
+              let script = document.createElement('script');
+              let keyword = createKeyword(res.responses[0].labelAnnotations);
+              script.src = "https://api.flickr.com/services/feeds/photos_public.gne?format=json&tagmode=any&tags=" + keyword;
+              // FlickrAPIにリクエスト送信
+              document.body.appendChild(script);
+              document.body.removeChild(script);
             })
         });
       </script>

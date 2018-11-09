@@ -17,28 +17,97 @@
         const api_key_f = `82b8fb90424d466a7781d9dd30b7a644`;
 
         // Flickr API
-        const url_f = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=0381854dcbbad40ac9a09a07365cbd6a&content_type=photos&per_page=30&format=json&nojsoncallback=1`
+        const url_f = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${api_key_f}&content_type=photos&per_page=30&format=json&nojsoncallback=1&extras=url_s`
+
+        // ページ
+        var page = 1;
 
         // リクエスト送信
-        const sendAPI = (tags) => {
+        const sendAPI = (tags, page) => {
           let request = new XMLHttpRequest();
           console.log(tags);
-          request.open('GET', `${url_f}&tags=${tags}`, false);
+          request.open('GET', `${url_f}&tags=${tags}&page=${page}`, false);
           request.send();
           let p = request.responseText;
-          console.log(p);
-          return p;
+          console.log(JSON.parse(p));
+          return JSON.parse(p);
         }
+
         document.getElementById('send').addEventListener('click', ev => {
-          let tags = document.getElementById('keyword').value;
-          let p = sendAPI(tags);
-          document.querySelector('pre').innerHTML = p;
-          let farm = p.photos.photo[0].farm;
-          let server = p.photos.photo[0].server;
-          let id = p.photos.photo[0].id;
-          let secret = p.photos.photo[0].secret;
-          document.write("<img　src=`http://farm${farm}.staticflickr.com/${server}/${id}_${secret}.jpg`>");
+          document.querySelector('pre').innerHTML = "";
+          var tags = document.getElementById('keyword').value;
+          let pages = sendAPI(tags, 1).photos.pages;
+          var page = 1;
+          let p = sendAPI(tags, page);
+          var table = "";
+          table += "<table>";
+          for(i = 0; i < p.photos.photo.length; i += 5){
+            // // imgタグを生成
+            // imgs[i] = document.createElement('img');
+            // imgs[i].src = p.photos.photo[i].url_s;
+            // // FlickrAPIにリクエスト送信
+            // document.body.appendChild(imgs[i]);
+            table += "<tr>";
+            k = i;
+            while(k < (i+5) && k < p.photos.photo.length){
+              table += "<td>";
+              table += `<img src=${p.photos.photo[k].url_s}>`;
+              table += "</td>";
+              k++;
+            }
+            table += "</tr>";
+          }
+          table += "</table>";
+          document.querySelector('pre').innerHTML += table;
+          document.querySelector('pre').innerHTML += "<input type=submit value=next id=load>";
+          page++;
+          add(tags);
+          // let button = document.createElement('input');
+          // button.type = "submit";
+          // button.id = "load";
+          // button.value="load";
+          // document.body.appendChild(button);
+
+          // // imgタグを生成
+          // let img = document.createElement('img');
+          // img.src = p.photos.photo[0].url_s;
+          // // FlickrAPIにリクエスト送信
+          // document.body.appendChild(img);
+
         })
+
+        const add = (tags) => {
+          document.getElementById('load').addEventListener('click', ev => {
+            document.querySelector('pre').innerHTML = "";
+            let pages = sendAPI(tags, 1).photos.pages;
+            if(page <= pages){
+              let p = sendAPI(tags, page);
+              var table = "";
+              table += "<table>";
+              for(i = 0; i < p.photos.photo.length; i += 5){
+                // // imgタグを生成
+                // imgs[i] = document.createElement('img');
+                // imgs[i].src = p.photos.photo[i].url_s;
+                // // FlickrAPIにリクエスト送信
+                // document.body.appendChild(imgs[i]);
+                table += "<tr>";
+                k = i;
+                while(k < (i+5) && k < p.photos.photo.length){
+                  table += "<td>";
+                  table += `<img src=${p.photos.photo[k].url_s}>`;
+                  table += "</td>";
+                  k++;
+                }
+                table += "</tr>";
+              }
+              table += "</table>";
+              document.querySelector('pre').innerHTML += table;
+              document.querySelector('pre').innerHTML += "<input type=submit value=next id=load>";
+              page++;
+              add(tags);
+            }
+          })
+        }
       </script>
     </main>
     <footer>
